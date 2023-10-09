@@ -1,9 +1,13 @@
 package main
 
-import "fmt"
-func Help() {
- fmt.Println("help")
-}
+import (
+	"fiber_gorm/db"
+	"fiber_gorm/db/dotenv"
+	"fiber_gorm/router"
+)
+  
 func main() {
- Help()
-}
+   dotenv.SetDotenv()
+   db.InitDB()
+   router.Init() 
+}   
