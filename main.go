@@ -5,9 +5,9 @@ import (
 	"fiber_gorm/db/dotenv"
 	"fiber_gorm/router"
 )
-  
+
 func main() {
-   dotenv.SetDotenv()
-   db.InitDB()
-   router.Init() 
-}   
+	dotenv.SetDotenv()
+	db.InitDB()
+	router.Init()
+}

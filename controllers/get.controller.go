@@ -8,10 +8,39 @@ import (
 func PostGetAll()fiber.Handler {
 
    return func(c *fiber.Ctx) error {
-	       user,err := services.PostCreate()
+	      name := c.Params("name")
+	       user,err := services.PostCreate(c)
 	    if err != nil{
-			 		return c.Status(fiber.ErrBadRequest.Code).JSON(err)
+			 	return c.Status(fiber.ErrBadRequest.Code).JSON(err.Error())
 		}
-		return c.Status(fiber.StatusOK).JSON(user)
+		return c.Status(fiber.StatusOK).JSON( fiber.Map{"data": user ,"name":name})
+	}
+}
+func GetAll()fiber.Handler {
+
+   return func(c *fiber.Ctx) error {
+	       user,err := services.GetRead(c)
+	    if err != nil{
+		return c.Status(fiber.ErrBadRequest.Code).JSON(err.Error())
+		}
+		return c.Status(fiber.StatusOK).JSON( fiber.Map{"data": user })
+	}
+}
+func Update()fiber.Handler {
+   return func(c *fiber.Ctx) error {
+	       user,err := services.UpDate(c)
+	    if err != nil{
+		return c.Status(fiber.ErrBadRequest.Code).JSON(err.Error())
+		}
+		return c.Status(fiber.StatusOK).JSON( fiber.Map{"data": user })
+	}
+}
+func Delete()fiber.Handler {
+   return func(c *fiber.Ctx) error {
+	       intVar,err := services.Delete(c)
+	    if err != nil{
+		return c.Status(fiber.ErrBadRequest.Code).JSON(err.Error())
+		}
+		return c.Status(fiber.StatusOK).JSON( fiber.Map{"data": intVar })
 	}
 }

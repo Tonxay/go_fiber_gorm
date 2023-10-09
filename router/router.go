@@ -9,9 +9,12 @@ import (
 
 func setUpRouter(){
     app := fiber.New()
-	
+
 	postRouter := app.Group("/get")
-	postRouter.Get("",controllers.PostGetAll())
+	postRouter.Post("create/:name/:id",controllers.PostGetAll())
+	postRouter.Get("user",controllers.GetAll())
+	postRouter.Post("update/:name/:id",controllers.Update())
+	postRouter.Delete("delete/:id",controllers.Delete())
 
 	log.Fatal(app.Listen(":8082"))
    

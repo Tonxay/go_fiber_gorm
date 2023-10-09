@@ -1,7 +1,6 @@
 package models
 
-type Studen struct{
-	Frist_name string
-	// Age int
-    // Birthday time.Time
+type User struct{
+	Id   int `gorm:"primaryKey"`
+	Name string
 }
