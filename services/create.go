@@ -53,4 +53,5 @@ func Delete(c *fiber.Ctx) (int, error) {
 		return intVer, err1
 	}
 	return intVer, nil
+	//test
 }
