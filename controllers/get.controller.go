@@ -78,6 +78,42 @@ func GetOtherAPI() fiber.Handler {
 			})
 		}
 
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": something})
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"test": "test", "data": something})
+	}
+}
+
+func PostBodyData() fiber.Handler {
+	var data fiber.Map
+	return func(c *fiber.Ctx) error {
+		if err := c.BodyParser(&data); err != nil {
+			return err
+		}
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{"data": data})
+	}
+}
+func PostBodyFromFile() fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+		file, err := c.FormFile("file")
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"err": err,
+			})
+		}
+		err1 := c.SaveFile(file, "./"+file.Filename)
+		if err1 != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"err": err1,
+			})
+		}
+
+		return c.SendFile("./" + file.Filename)
+	}
+}
+
+func Getimage() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		name := c.Params("name")
+		return c.SendFile("./" + name)
 	}
 }
