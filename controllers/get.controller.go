@@ -3,8 +3,10 @@ package controllers
 import (
 	"encoding/json"
 	"fiber_gorm/services"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt"
 )
 
 type Abser interface {
@@ -116,4 +118,36 @@ func Getimage() fiber.Handler {
 		name := c.Params("name")
 		return c.SendFile("./" + name)
 	}
+}
+
+func Login() fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+
+		user := c.FormValue("user")
+		pass := c.FormValue("pass")
+		// Throws Unauthorized error
+		if user != "john" || pass != "doe" {
+			return c.SendStatus(fiber.StatusUnauthorized)
+		}
+
+		// Create the Claims
+		claims := jwt.MapClaims{
+			"name":  "John Doe",
+			"admin": true,
+			"exp":   time.Now().Add(time.Hour * 72).Unix(),
+		}
+
+		// Create token
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+		// Generate encoded token and send it as response.
+		t, err := token.SignedString([]byte("eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW5zZGZuc25kbW5tZ2xrbmZham9lcm9waWphW2hqaSIsIklzc3VlciI6Iklzc3VlcmZrbWdbb2RmaFtqYXNmZGpbaG9lckgiLCJVc2VybmFtZSI6IlNGREdKYXZhSW5Vc2VzZHNkZmtrc2Rma24iLCJleHAiOjE2OTcwODYzNDIsImlhdCI6MTY5NzA4NjM0Mn0.CFW865hEWeKy7VFM2PQxMREMuiX6X2_4-JCgQK92KNw"))
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+
+		return c.JSON(fiber.Map{"token": t})
+	}
+
 }

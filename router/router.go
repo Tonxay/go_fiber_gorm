@@ -27,4 +27,6 @@ func router1(app *fiber.App) {
 	postRouter.Post("testBody", controllers.PostBodyData())
 	postRouter.Post("fromFile", controllers.PostBodyFromFile())
 	postRouter.Get("getImage/:name", controllers.Getimage())
+
+	postRouter.Post("/login", controllers.Login())
 }
