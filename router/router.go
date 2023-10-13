@@ -19,6 +19,7 @@ func Init() {
 
 func router1(app *fiber.App) {
 	postRouter := app.Group("/get")
+
 	postRouter.Post("create/:name/:id", controllers.PostGetAll())
 	postRouter.Get("user", controllers.GetAll())
 	postRouter.Post("update/:name/:id", controllers.Update())
@@ -27,6 +28,6 @@ func router1(app *fiber.App) {
 	postRouter.Post("testBody", controllers.PostBodyData())
 	postRouter.Post("fromFile", controllers.PostBodyFromFile())
 	postRouter.Get("getImage/:name", controllers.Getimage())
-
 	postRouter.Post("/login", controllers.Login())
+	postRouter.Get("getAithencition", controllers.AuthRequired(), controllers.GetAuthentication())
 }

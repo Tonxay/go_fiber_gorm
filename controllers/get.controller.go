@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fiber_gorm/services"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -142,7 +143,7 @@ func Login() fiber.Handler {
 		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 		// Generate encoded token and send it as response.
-		t, err := token.SignedString([]byte("eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW5zZGZuc25kbW5tZ2xrbmZham9lcm9waWphW2hqaSIsIklzc3VlciI6Iklzc3VlcmZrbWdbb2RmaFtqYXNmZGpbaG9lckgiLCJVc2VybmFtZSI6IlNGREdKYXZhSW5Vc2VzZHNkZmtrc2Rma24iLCJleHAiOjE2OTcwODYzNDIsImlhdCI6MTY5NzA4NjM0Mn0.CFW865hEWeKy7VFM2PQxMREMuiX6X2_4-JCgQK92KNw"))
+		t, err := token.SignedString([]byte("a"))
 		if err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
@@ -150,4 +151,46 @@ func Login() fiber.Handler {
 		return c.JSON(fiber.Map{"token": t})
 	}
 
+}
+
+func GetAuthentication() fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "ACCAPT"})
+
+	}
+}
+
+func AuthRequired() fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Missing Authorization Header",
+			})
+		}
+
+		splitToken := strings.Split(authHeader, "Bearer ")
+
+		if len(splitToken) != 2 {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Invalid Token Format",
+			})
+		}
+
+		tokenString := splitToken[1]
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte("a"), nil
+		})
+
+		if err != nil || !token.Valid {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Invalid Token",
+			})
+		}
+
+		return c.Next()
+	}
 }
