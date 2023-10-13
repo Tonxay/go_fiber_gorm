@@ -157,7 +157,7 @@ func GetAuthentication() fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
 
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "ACCAPT"})
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "Authorization accept"})
 
 	}
 }
@@ -178,9 +178,7 @@ func AuthRequired() fiber.Handler {
 				"message": "Invalid Token Format",
 			})
 		}
-
 		tokenString := splitToken[1]
-
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte("a"), nil
 		})
