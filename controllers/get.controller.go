@@ -156,8 +156,9 @@ func Login() fiber.Handler {
 func GetAuthentication() fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
+		username := c.Locals("username").(string)
 
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "Authorization accept"})
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "Authorization accept", "name": username})
 
 	}
 }
@@ -188,6 +189,14 @@ func AuthRequired() fiber.Handler {
 				"message": "Invalid Token",
 			})
 		}
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "Failed to parse claims",
+			})
+		}
+		name := claims["name"].(string)
+		c.Locals("username", name)
 
 		return c.Next()
 	}
