@@ -11,4 +11,5 @@ func main() {
 	dotenv.SetDotenv()
 	db.InitDB()
 	router.Init()
+
 }

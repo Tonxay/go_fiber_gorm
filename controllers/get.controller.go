@@ -58,12 +58,11 @@ func Delete() fiber.Handler {
 func GetOtherAPI() fiber.Handler {
 
 	return func(c *fiber.Ctx) error {
-
 		a := fiber.AcquireAgent()
 		req := a.Request()
 		req.Header.SetMethod("GET")
+		req.Header.Add("", "sd")
 		req.SetRequestURI("https://api.publicapis.org/entries")
-
 		if err := a.Parse(); err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
@@ -163,6 +162,31 @@ func GetAuthentication() fiber.Handler {
 	}
 }
 
+func InsertOnetoOne() fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+
+		err := services.InsertOnetoOne(c)
+		if err != nil {
+			return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": "Insert Doneß accept"})
+
+	}
+}
+func QueryOnetoOne() fiber.Handler {
+
+	return func(c *fiber.Ctx) error {
+
+		data, err := services.GetQueryOnetoOne(c)
+		if err != nil {
+			return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"error": err.Error()})
+		}
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"data": data})
+
+	}
+}
+
 func AuthRequired() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		authHeader := c.Get("Authorization")
@@ -195,7 +219,9 @@ func AuthRequired() fiber.Handler {
 				"message": "Failed to parse claims",
 			})
 		}
+
 		name := claims["name"].(string)
+
 		c.Locals("username", name)
 
 		return c.Next()
